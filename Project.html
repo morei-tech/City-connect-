@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Connect - Report Issues in Your Community</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --orange-primary: #FF6B35;
+            --orange-dark: #E85A2B;
+            --orange-light: #FFF5F2;
+            --orange-accent: #FF8C61;
+            --text-dark: #1A1A1A;
+            --text-gray: #6B6B6B;
+            --border-color: #E8E8E8;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: var(--white);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        nav {
+            background: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.2rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--orange-primary);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--orange-primary);
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--orange-light) 0%, var(--white) 100%);
+            padding: 5rem 2rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-gray);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.9rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--orange-primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--orange-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--orange-primary);
+            border: 2px solid var(--orange-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--orange-light);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .page-subtitle {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .form-section {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .form-section h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.2s;
+            background: var(--white);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--orange-primary);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .issue-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .issue-card {
+            padding: 1.2rem;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--white);
+        }
+
+        .issue-card:hover {
+            border-color: var(--orange-primary);
+            transform: translateY(-2px);
+        }
+
+        .issue-card.selected {
+            border-color: var(--orange-primary);
+            background: var(--orange-light);
+        }
+
+        .issue-card .icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .issue-card .label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+        }
+
+        .priority-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .priority-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border: 2px solid;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            background: var(--white);
+        }
+
+        .priority-low { border-color: #4CAF50; color: #4CAF50; }
+        .priority-low.selected { background: #4CAF50; color: var(--white); }
+        .priority-medium { border-color: var(--orange-primary); color: var(--orange-primary); }
+        .priority-medium.selected { background: var(--orange-primary); color: var(--white); }
+        .priority-high { border-color: #F44336; color: #F44336; }
+        .priority-high.selected { background: #F44336; color: var(--white); }
+
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--orange-light);
+        }
+
+        .upload-area:hover {
+            border-color: var(--orange-primary);
+            background: var(--white);
+        }
+
+        .upload-area input { display: none; }
+
+        .reports-grid { display: grid; gap: 1.5rem; }
+
+        .report-card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.8rem;
+            transition: all 0.2s;
+        }
+
+        .report-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .report-title { font-weight: 700; font-size: 1.1rem; color: var(--text-dark); margin-bottom: 0.3rem; }
+        .report-meta { color: var(--text-gray); font-size: 0.85rem; }
+
+        .status-badge { padding: 0.4rem 0.9rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .status-pending { background: #FFF3CD; color: #856404; }
+        .status-in-progress { background: #D1ECF1; color: #0C5460; }
+        .status-resolved { background: #D4EDDA; color: #155724; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.8rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--orange-primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label { color: var(--text-gray); font-size: 0.9rem; font-weight: 500; }
+
+        .emergency-container { max-width: 700px; margin: 0 auto; text-align: center; }
+        .emergency-icon { font-size: 5rem; margin-bottom: 1.5rem; }
+
+        .warning-box {
+            background: #FFF3CD;
+            border-left: 4px solid var(--orange-primary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .emergency-contacts {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .contact-item:last-child { border-bottom: none; }
+
+        footer {
+            background: var(--text-dark);
+            color: var(--white);
+            padding: 3rem 2rem;
+            margin-top: auto;
+        }
+
+        footer .container {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+            padding: 0 2rem;
+        }
+
+        footer h4 { font-family: 'Syne', sans-serif; font-size: 1.1rem; margin-bottom: 1rem; }
+        footer p, footer a { color: rgba(255, 255, 255, 0.7); text-decoration: none; font-size: 0.9rem; line-height: 2; }
+        footer a:hover { color: var(--orange-accent); }
+
+        @media (max-width: 968px) {
+            .hero h1 { font-size: 2.5rem; }
+            .form-grid, .stats-grid, footer .container { grid-template-columns: 1fr; }
+            .issue-grid { grid-template-columns: repeat(2, 1fr); }
+            .nav-links { gap: 1.5rem; }
+        }
+
+        @media (max-width: 640px) {
+            .issue-grid { grid-template-columns: 1fr; }
+            .priority-selector { flex-direction: column; }
+        }
+
+        .success-alert {
+            background: #D4EDDA;
+            border: 1px solid #C3E6CB;
+            color: #155724;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+
+        .page-transition { animation: fadeIn 0.4s ease-in-out; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn, .issue-card, .priority-btn, .report-card, .stat-card, .form-section {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-card { animation: slideUp 0.5s ease-out backwards; }
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-section { animation: fadeInScale 0.5s ease-out backwards; }
+        .form-grid .form-section:nth-child(1) { animation-delay: 0.1s; }
+        .form-grid .form-section:nth-child(2) { animation-delay: 0.2s; }
+        .form-grid .form-section:nth-child(3) { animation-delay: 0.3s; }
+        .form-grid .form-section:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .hero h1 { animation: slideDown 0.6s ease-out; }
+        .hero p { animation: slideDown 0.6s ease-out 0.2s backwards; }
+        .cta-buttons { animation: slideDown 0.6s ease-out 0.4s backwards; }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .report-card { animation: fadeInLeft 0.4s ease-out backwards; }
+        .report-card:nth-child(1) { animation-delay: 0.1s; }
+        .report-card:nth-child(2) { animation-delay: 0.2s; }
+        .report-card:nth-child(3) { animation-delay: 0.3s; }
+        .report-card:nth-child(4) { animation-delay: 0.4s; }
+        .report-card:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .issue-card { animation: popIn 0.3s ease-out backwards; }
+        .issue-card:nth-child(1) { animation-delay: 0.05s; }
+        .issue-card:nth-child(2) { animation-delay: 0.1s; }
+        .issue-card:nth-child(3) { animation-delay: 0.15s; }
+        .issue-card:nth-child(4) { animation-delay: 0.2s; }
+        .issue-card:nth-child(5) { animation-delay: 0.25s; }
+        .issue-card:nth-child(6) { animation-delay: 0.3s; }
+        .issue-card:nth-child(7) { animation-delay: 0.35s; }
+        .issue-card:nth-child(8) { animation-delay: 0.4s; }
+        .issue-card:nth-child(9) { animation-delay: 0.45s; }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .emergency-icon { animation: emergencyPulse 2s ease-in-out infinite; }
+
+        @keyframes emergencyPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .success-alert { animation: slideInDown 0.4s ease-out; }
+
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .nav-links a { position: relative; }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--orange-primary);
+            transition: width 0.3s ease;
+        }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function Router() {
+            const [currentPath, setCurrentPath] = useState(() => {
+                const path = window.location.pathname;
+                return path === '/' || path === '' ? '/' : path;
+            });
+
+            useEffect(() => {
+                if (window.location.pathname === '' || window.location.pathname === '/') {
+                    window.history.replaceState({}, '', '/');
+                }
+                const handlePopState = () => setCurrentPath(window.location.pathname);
+                window.addEventListener('popstate', handlePopState);
+                return () => window.removeEventListener('popstate', handlePopState);
+            }, []);
+
+            const navigate = (path) => {
+                window.history.pushState({}, '', path);
+                setCurrentPath(path);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            return (
+                <div className="app-container">
+                    <Navigation currentPath={currentPath} navigate={navigate} />
+                    <div className="page-transition">
+                        {currentPath === '/' && <HomePage navigate={navigate} />}
+                        {currentPath === '/report' && <ReportPage />}
+                        {currentPath === '/emergency' && <EmergencyPage />}
+                        {currentPath === '/status' && <StatusPage />}
+                    </div>
+                    <Footer />
+                </div>
+            );
+        }
+
+        function Navigation({ currentPath, navigate }) {
+            return (
+                <nav>
+                    <div className="container">
+                        <a className="logo" onClick={() => navigate('/')}>City Connect</a>
+                        <div className="nav-links">
+                            <a className={currentPath === '/' ? 'active' : ''} onClick={() => navigate('/')}>Home</a>
+                            <a className={currentPath === '/report' ? 'active' : ''} onClick={() => navigate('/report')}>Report Issue</a>
+                            <a className={currentPath === '/status' ? 'active' : ''} onClick={() => navigate('/status')}>Track Status</a>
+                            <a className={currentPath === '/emergency' ? 'active' : ''} onClick={() => navigate('/emergency')}>Emergency</a>
+                        </div>
+                    </div>
+                </nav>
+            );
+        }
+
+        function HomePage({ navigate }) {
+            return (
+                <>
+                    <section className="hero">
+                        <h1>Your Voice,<br/>Your Community</h1>
+                        <p>Report civic issues instantly and help make your neighborhood better. Fast, transparent, and effective.</p>
+                        <div className="cta-buttons">
+                            <button className="btn btn-primary" onClick={() => navigate('/report')}>Report an Issue</button>
+                            <button className="btn btn-secondary" onClick={() => navigate('/status')}>Track Status</button>
+                        </div>
+                    </section>
+
+                    <div className="container">
+                        <div className="stats-grid">
+                            <div className="stat-card">
+                                <div className="stat-number">1,247</div>
+                                <div className="stat-label">Total Reports</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-number">89</div>
+                                <div className="stat-label">Active Issues</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-number">1,158</div>
+                                <div className="stat-label">Resolved</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-number">4.2</div>
+                                <div className="stat-label">Avg Days to Resolve</div>
+                            </div>
+                        </div>
+
+                        <h2 className="page-title">How It Works</h2>
+                        <p className="page-subtitle">Simple steps to make a difference</p>
+
+                        <div className="form-grid">
+                            <div className="form-section">
+                                <h3>1. Report the Issue</h3>
+                                <p>Spot a pothole, broken streetlight, or any civic problem? Take a photo and describe what you see.</p>
+                            </div>
+                            <div className="form-section">
+                                <h3>2. We Notify Authorities</h3>
+                                <p>Your report is instantly sent to the relevant local government department for action.</p>
+                            </div>
+                            <div className="form-section">
+                                <h3>3. Track Progress</h3>
+                                <p>Get real-time updates on your report status from submission to resolution.</p>
+                            </div>
+                            <div className="form-section">
+                                <h3>4. Issue Resolved</h3>
+                                <p>Authorities fix the problem and close the report. Your community gets better!</p>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            );
+        }
+
+        function ReportPage() {
+            const [selectedType, setSelectedType] = useState(null);
+            const [selectedPriority, setSelectedPriority] = useState(null);
+            const [files, setFiles] = useState([]);
+            const [showSuccess, setShowSuccess] = useState(false);
+            const [formData, setFormData] = useState({ title: '', description: '', location: '', name: '', phone: '' });
+
+            const issueTypes = [
+                { id: 'pothole', icon: '🕳️', label: 'Pothole' },
+                { id: 'streetlight', icon: '💡', label: 'Street Light' },
+                { id: 'garbage', icon: '🗑️', label: 'Garbage' },
+                { id: 'water', icon: '💧', label: 'Water Supply' },
+                { id: 'traffic', icon: '🚦', label: 'Traffic Signal' },
+                { id: 'drainage', icon: '🌊', label: 'Drainage' },
+                { id: 'road', icon: '🛣️', label: 'Road Damage' },
+                { id: 'park', icon: '🌳', label: 'Park/Garden' },
+                { id: 'other', icon: '📋', label: 'Other' }
+            ];
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (!selectedType || !selectedPriority) {
+                    alert('Please select issue type and priority');
+                    return;
+                }
+                setShowSuccess(true);
+                setTimeout(() => {
+                    setShowSuccess(false);
+                    setSelectedType(null);
+                    setSelectedPriority(null);
+                    setFiles([]);
+                    setFormData({ title: '', description: '', location: '', name: '', phone: '' });
+                }, 3000);
+            };
+
+            const getLocation = () => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const lat = position.coords.latitude.toFixed(6);
+                            const lng = position.coords.longitude.toFixed(6);
+                            setFormData({...formData, location: `${lat}, ${lng}`});
+                        },
+                        () => alert('Unable to get location')
+                    );
+                }
+            };
+
+            return (
+                <div className="container">
+                    <h1 className="page-title">Report an Issue</h1>
+                    <p className="page-subtitle">Help us identify and fix problems in your community</p>
+
+                    {showSuccess && (
+                        <div className="success-alert">
+                            ✓ Report submitted successfully! We'll notify you of updates.
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-grid">
+                            <div className="form-section">
+                                <h3>Issue Details</h3>
+                                <div className="form-group">
+                                    <label>What type of issue is this? *</label>
+                                    <div className="issue-grid">
+                                        {issueTypes.map(type => (
+                                            <div
+                                                key={type.id}
+                                                className={`issue-card ${selectedType === type.id ? 'selected' : ''}`}
+                                                onClick={() => setSelectedType(type.id)}
+                                            >
+                                                <div className="icon">{type.icon}</div>
+                                                <div className="label">{type.label}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <label>Title *</label>
+                                    <input type="text" placeholder="Brief description of the issue" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} required />
+                                </div>
+                                <div className="form-group">
+                                    <label>Detailed Description *</label>
+                                    <textarea placeholder="Provide more details about the issue..." value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} required />
+                                </div>
+                                <div className="form-group">
+                                    <label>Priority Level *</label>
+                                    <div className="priority-selector">
+                                        <div className={`priority-btn priority-low ${selectedPriority === 'low' ? 'selected' : ''}`} onClick={() => setSelectedPriority('low')}>Low</div>
+                                        <div className={`priority-btn priority-medium ${selectedPriority === 'medium' ? 'selected' : ''}`} onClick={() => setSelectedPriority('medium')}>Medium</div>
+                                        <div className={`priority-btn priority-high ${selectedPriority === 'high' ? 'selected' : ''}`} onClick={() => setSelectedPriority('high')}>High</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="form-section">
+                                <h3>Location & Contact</h3>
+                                <div className="form-group">
+                                    <label>Location *</label>
+                                    <input type="text" placeholder="Address or landmark" value={formData.location} onChange={(e) => setFormData({...formData, location: e.target.value})} required />
+                                    <button type="button" className="btn btn-secondary" style={{marginTop: '0.5rem', width: '100%'}} onClick={getLocation}>📍 Use Current Location</button>
+                                </div>
+                                <div className="form-group">
+                                    <label>Your Name (Optional)</label>
+                                    <input type="text" placeholder="Your name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
+                                </div>
+                                <div className="form-group">
+                                    <label>Contact Number (Optional)</label>
+                                    <input type="tel" placeholder="For updates on this report" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} />
+                                </div>
+                                <div className="form-group">
+                                    <label>Upload Photos (Optional)</label>
+                                    <div className="upload-area" onClick={() => document.getElementById('fileInput').click()}>
+                                        <input type="file" id="fileInput" multiple accept="image/*" onChange={(e) => setFiles(Array.from(e.target.files))} />
+                                        <p style={{fontSize: '2rem', marginBottom: '0.5rem'}}>📸</p>
+                                        <p style={{color: 'var(--text-gray)'}}>{files.length > 0 ? `${files.length} file(s) selected` : 'Click to upload photos'}</p>
+                                    </div>
+                                </div>
+                                <button type="submit" className="btn btn-primary" style={{width: '100%', padding: '1rem'}}>Submit Report</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            );
+        }
+
+        function StatusPage() {
+            const [filter, setFilter] = useState('all');
+            const reports = [
+                { id: 1, type: '🕳️', title: 'Large Pothole on Main Street', location: 'Main St & 5th Ave', status: 'pending', date: '2 hours ago', description: 'Deep pothole causing traffic issues' },
+                { id: 2, type: '💡', title: 'Street Light Not Working', location: 'Park Avenue', status: 'in-progress', date: '1 day ago', description: 'No lighting at night, safety concern' },
+                { id: 3, type: '🗑️', title: 'Garbage Overflow', location: 'Elm Street', status: 'resolved', date: '3 days ago', description: 'Bins overflowing, resolved by sanitation' },
+                { id: 4, type: '💧', title: 'Water Leak', location: 'Oak Road', status: 'in-progress', date: '5 hours ago', description: 'Continuous water leak on sidewalk' },
+                { id: 5, type: '🛣️', title: 'Road Crack', location: 'Highway 101', status: 'pending', date: '1 day ago', description: 'Large crack developing on highway' }
+            ];
+
+            const filteredReports = filter === 'all' ? reports : reports.filter(r => r.status === filter);
+
+            return (
+                <div className="container">
+                    <h1 className="page-title">Track Status</h1>
+                    <p className="page-subtitle">See all reported issues and their current status</p>
+                    <div style={{marginBottom: '2rem', display: 'flex', gap: '1rem'}}>
+                        {['all', 'pending', 'in-progress', 'resolved'].map(f => (
+                            <button key={f} className={`btn ${filter === f ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setFilter(f)}>
+                                {f === 'all' ? 'All Reports' : f === 'in-progress' ? 'In Progress' : f.charAt(0).toUpperCase() + f.slice(1)}
+                            </button>
+                        ))}
+                    </div>
+                    <div className="reports-grid">
+                        {filteredReports.map(report => (
+                            <div key={report.id} className="report-card">
+                                <div className="report-header">
+                                    <div>
+                                        <div className="report-title">{report.type} {report.title}</div>
+                                        <div className="report-meta">📍 {report.location} • ⏰ {report.date}</div>
+                                    </div>
+                                    <span className={`status-badge status-${report.status}`}>
+                                        {report.status === 'pending' && 'Pending'}
+                                        {report.status === 'in-progress' && 'In Progress'}
+                                        {report.status === 'resolved' && 'Resolved'}
+                                    </span>
+                                </div>
+                                <p style={{color: 'var(--text-gray)', marginTop: '0.8rem'}}>{report.description}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        function EmergencyPage() {
+            const [formData, setFormData] = useState({ type: '', location: '', description: '', phone: '' });
+
+            const handleEmergencySubmit = (e) => {
+                e.preventDefault();
+                if (confirm('⚠️ This will alert emergency services immediately. Continue?')) {
+                    alert('🚨 EMERGENCY ALERT SENT\n\nEmergency services notified.\nHelp is on the way!\n\nStay safe and follow local emergency protocols.');
+                    setFormData({ type: '', location: '', description: '', phone: '' });
+                }
+            };
+
+            return (
+                <div className="container">
+                    <div className="emergency-container">
+                        <div className="emergency-icon">🚨</div>
+                        <h1 className="page-title">Emergency Reporting</h1>
+                        <p className="page-subtitle">For immediate threats to life, property, or public safety</p>
+                        <div className="warning-box">
+                            <strong>⚠️ Important:</strong> This is for genuine emergencies only. For life-threatening situations, please call your local emergency number (911 in US, 112 in EU, etc.) immediately.
+                        </div>
+                        <form onSubmit={handleEmergencySubmit} style={{textAlign: 'left'}}>
+                            <div className="form-section">
+                                <div className="form-group">
+                                    <label>Emergency Type *</label>
+                                    <select value={formData.type} onChange={(e) => setFormData({...formData, type: e.target.value})} required>
+                                        <option value="">Select emergency type</option>
+                                        <option value="fire">🔥 Fire</option>
+                                        <option value="accident">🚗 Accident</option>
+                                        <option value="flood">🌊 Flooding</option>
+                                        <option value="tree">🌳 Fallen Tree/Hazard</option>
+                                        <option value="gas">⚠️ Gas Leak</option>
+                                        <option value="electrical">⚡ Electrical Hazard</option>
+                                        <option value="other">🚨 Other Emergency</option>
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label>Location *</label>
+                                    <input type="text" placeholder="Exact location of emergency" value={formData.location} onChange={(e) => setFormData({...formData, location: e.target.value})} required />
+                                </div>
+                                <div className="form-group">
+                                    <label>Description *</label>
+                                    <textarea placeholder="Describe the emergency situation..." value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} required />
+                                </div>
+                                <div className="form-group">
+                                    <label>Contact Number *</label>
+                                    <input type="tel" placeholder="Emergency contact number" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} required />
+                                </div>
+                                <button type="submit" className="btn btn-primary" style={{width: '100%', padding: '1.2rem', background: '#F44336', fontSize: '1.1rem'}}>
+                                    🚨 SEND EMERGENCY ALERT
+                                </button>
+                            </div>
+                        </form>
+                        <div className="emergency-contacts">
+                            <h3 style={{marginBottom: '1.5rem'}}>Emergency Contacts</h3>
+                            <div className="contact-item">
+                                <span><strong>Police Emergency</strong></span>
+                                <span style={{fontWeight: 'bold', color: 'var(--orange-primary)'}}>112</span>
+                            </div>
+                            <div className="contact-item">
+                                <span><strong>Fire Department</strong></span>
+                                <span style={{fontWeight: 'bold', color: 'var(--orange-primary)'}}>112</span>
+                            </div>
+                            <div className="contact-item">
+                                <span><strong>Medical Emergency</strong></span>
+                                <span style={{fontWeight: 'bold', color: 'var(--orange-primary)'}}>112</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function Footer() {
+            return (
+                <footer>
+                    <div className="container">
+                        <div>
+                            <h4>City Connect</h4>
+                            <p>Making communities better through transparent civic engagement and efficient issue resolution.</p>
+                        </div>
+                        <div>
+                            <h4>Quick Links</h4>
+                            <p><a href="#">About Us</a></p>
+                            <p><a href="#">How It Works</a></p>
+                            <p><a href="#">FAQ</a></p>
+                        </div>
+                        <div>
+                            <h4>Legal</h4>
+                            <p><a href="#">Privacy Policy</a></p>
+                            <p><a href="#">Terms of Service</a></p>
+                            <p><a href="#">Contact</a></p>
+                        </div>
+                        <div>
+                            <h4>Contact</h4>
+                            <p>support@cityconnect.gov</p>
+                            <p>1-800-CIVIC-01</p>
+                            <p>City Hall, Main Street</p>
+                        </div>
+                    </div>
+                </footer>
+            );
+        }
+
+        ReactDOM.render(<Router />, document.getElementById('root'));
+    </script>
+</body>
+</html>
